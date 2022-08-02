@@ -52,7 +52,7 @@ namespace QuickSDL {
 		//Initialize Timer
 		mTimer = Timer::Instance();
 
-		m_grid = new Grid(40, 20, 20, 20, 2);
+		m_grid = new Grid(40, 40, 20, 20, 2);
 		m_grid->Pos(Vector2(Graphics::Instance()->SCREEN_WIDTH * 0.5f, Graphics::Instance()->SCREEN_HEIGHT * 0.5f));
 	}
 

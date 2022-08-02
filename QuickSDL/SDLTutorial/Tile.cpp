@@ -1,11 +1,10 @@
 #include "Tile.h"
 
-Tile::Tile(int const& cost, int const& color, int const& width, int const& height)
-	: m_cost(cost)
-	, m_width(width)
-	, m_height(height)
-	, m_searched(false)
-	, m_pathLink(nullptr)
+Tile::Tile()
+	: m_visited(false)
+	, m_open(false)
+	, m_prevTile(nullptr)
+	, m_wall(false)
 {
 	m_texture = new QuickSDL::Texture("stars.png", 8, 0, 4, 4);
 	m_texture->Parent(this);
@@ -16,49 +15,61 @@ Tile::~Tile()
 	delete m_texture;
 }
 
-void Tile::SetAsStartTile()
+void Tile::SetAsStartPoint()
 {
 	m_texture->MoveClipRect(12, 0);
 }
 
-void Tile::SetAsEndTile()
+void Tile::SetAsEndPoint()
 {
 	m_texture->MoveClipRect(4, 0);
 }
 
-void Tile::SetAsSearchedTile()
+void Tile::SetAsVisitedPoint()
 {
 	m_texture->MoveClipRect(0, 0);
 }
 
-void Tile::SetAsPathTile()
+void Tile::SetAsPathPoint()
 {
 	m_texture->MoveClipRect(16, 0);
 }
 
-void Tile::Search(Tile* pathLink)
+void Tile::SetNeighbours(Tile* up, Tile* down, Tile* left, Tile* right)
+{
+	if (up && !up->m_wall)
+	{
+		m_neighbours[Up] = up;
+	}
+	if (down && !down->m_wall)
+	{
+		m_neighbours[Down] = down;
+	}
+	if (left && !left->m_wall)
+	{
+		m_neighbours[Left] = left;
+	}
+	if (right && !right->m_wall)
+	{
+		m_neighbours[Right] = right;
+	}
+}
+
+void Tile::Visit()
 {
 	m_open = true;
-	m_searched = true;
-	SetAsSearchedTile();
-	m_pathLink = pathLink;
+	m_visited = true;
+	SetAsVisitedPoint();
 }
 
-void Tile::SetNeightbours(Tile* up, Tile* down, Tile* left, Tile* right)
+void Tile::VisitNeighbours()
 {
-	m_neighbours[Up] = up;
-	m_neighbours[Down] = down;
-	m_neighbours[Left] = left;
-	m_neighbours[Right] = right;
-}
-
-void Tile::SearchNeighbours()
-{
-	for (int i = 0; i < TileDirections::Max; i++)
+	for (int i = 0; i < Max; i++)
 	{
-		if (m_neighbours[i] && !m_neighbours[i]->GetSearched())
+		if (m_neighbours[i] && !m_neighbours[i]->m_visited)
 		{
-			m_neighbours[i]->Search(this);
+			m_neighbours[i]->Visit();
+			m_neighbours[i]->m_prevTile = this;
 		}
 	}
 
@@ -67,5 +78,8 @@ void Tile::SearchNeighbours()
 
 void Tile::Render()
 {
-	m_texture->Render();
+	if (!m_wall)
+	{
+		m_texture->Render();
+	}
 }

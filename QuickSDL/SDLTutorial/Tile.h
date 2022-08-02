@@ -16,39 +16,38 @@ public:
 
 public:
 
-	Tile(int const& cost, int const& color, int const& width, int const& height);
+	Tile();
+
 	~Tile();
 
-	void Render() override;
+	void Render();
 
-	void SetAsStartTile();
-	void SetAsEndTile();
-	void SetAsSearchedTile();
-	void SetAsPathTile();
+	void SetAsStartPoint();
+	void SetAsEndPoint();
+	void SetAsVisitedPoint();
+	void SetAsPathPoint();
 
-	bool GetSearched() { return m_searched; }
-	bool GetOpen() { return m_searched; }
+	void SetNeighbours(Tile* up, Tile* down, Tile* left, Tile* right);
 
-	void Search(Tile* pathLink);
+	void Visit();
 
-	void SetNeightbours(Tile* up, Tile* down, Tile* left, Tile* right);
+	void VisitNeighbours();
 
-	void SearchNeighbours();
+	bool GetOpen() { return m_open; }
 
-	Tile* GetPathLink() { return m_pathLink; }
+	Tile* GetPrevTile() { return m_prevTile; }
+
+	void SetIsWall() { m_wall = true; }
 
 private:
 
-	int m_cost;
-	int m_width;
-	int m_height;
-
-	bool m_searched;
 	bool m_open;
+	bool m_visited;
+	bool m_wall;
 
-	Tile* m_neighbours[TileDirections::Max];
+	Tile* m_prevTile;
 
-	Tile* m_pathLink;
+	Tile* m_neighbours[4];
 
 	QuickSDL::Texture* m_texture;
 };

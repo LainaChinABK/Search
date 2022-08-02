@@ -9,13 +9,6 @@ private:
 
 	struct GridPoint
 	{
-		GridPoint(int _row = 0, int _col = 0)
-			: row(_row)
-			, col(_col)
-		{
-
-		}
-
 		int row;
 		int col;
 	};
@@ -26,9 +19,9 @@ public:
 
 	~Grid();
 
-	void Update() override;
+	void Update();
 
-	void Render() override;
+	void Render();
 
 private:
 
@@ -42,16 +35,15 @@ private:
 	unsigned int m_height;
 	unsigned int m_padding;
 
-	GridPoint m_start;
-	GridPoint m_end;
+	bool m_pathFound;
+
+	GridPoint m_startPoint;
+	GridPoint m_endPoint;
 
 	std::vector<std::vector<Tile*>> m_tiles;
 
 	std::vector<Tile*> m_open;
-	std::vector<Tile*> m_searched;
 
-	float const m_waitTimer = 0.1f;
-	float m_waitTime;
-
-	bool m_pathFound = false;
+	float const m_visitDelay = 0.1f;
+	float m_visitTimer;
 };
