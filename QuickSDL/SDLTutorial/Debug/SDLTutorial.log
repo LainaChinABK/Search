@@ -1,8 +1,0 @@
-﻿C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\Common7\IDE\VC\VCTargets\Microsoft.CppBuild.targets(391,5): warning MSB8028: The intermediate directory (Debug\) contains files shared from another project (SDLTutorial.vcxproj).  This can lead to incorrect clean and rebuild behavior.
-  GameManager.cpp
-  Grid.cpp
-c:\users\a_o_9\desktop\quicksdl\sdltutorial\grid.cpp(36): warning C4244: 'initializing': conversion from 'unsigned int' to 'float', possible loss of data
-c:\users\a_o_9\desktop\quicksdl\sdltutorial\grid.cpp(37): warning C4244: 'initializing': conversion from 'unsigned int' to 'float', possible loss of data
-  main.cpp
-  Generating Code...
-  SDLTutorial.vcxproj -> C:\Users\a_o_9\Desktop\QuickSDL\Debug\QuickSDL.exe
