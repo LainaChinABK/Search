@@ -1,4 +1,5 @@
 #include "Grid.h"
+#include "Timer.h"
 
 Grid::Grid(unsigned int const& rows, unsigned int const& cols, unsigned int const& width, unsigned int const& height, unsigned int const& padding)
 	: m_rows(rows)
@@ -6,6 +7,8 @@ Grid::Grid(unsigned int const& rows, unsigned int const& cols, unsigned int cons
 	, m_width(width)
 	, m_height(height)
 	, m_padding(padding)
+	, m_waitTime(0.0f)
+	, m_pathFound(false)
 {
 	GenerateTiles();
 }
@@ -30,8 +33,8 @@ void Grid::GenerateTiles()
 	m_start.row = 3;
 	m_start.col = 10;
 
-	m_end.row = 10;
-	m_end.col = 2;
+	m_end.row = 20;
+	m_end.col = 12;
 
 	float totalWidth = m_cols * (m_width + (m_padding - 1));
 	float totalheight = m_rows * (m_height + (m_padding - 1));
@@ -52,11 +55,64 @@ void Grid::GenerateTiles()
 		}
 	}
 
+	for (unsigned int i = 0; i < m_tiles.size(); i++)
+	{
+		for (unsigned int j = 0; j < m_tiles[i].size(); j++)
+		{
+			m_tiles[i][j]->SetNeightbours(i > 0 ? m_tiles[i - 1][j] : nullptr, i < m_tiles.size() - 1 ? m_tiles[i + 1][j] : nullptr
+				, j > 0 ? m_tiles[i][j - 1] : nullptr, j < m_tiles[i].size() - 1 ? m_tiles[i][j + 1] : nullptr);
+		}
+	}
+
+	m_tiles[m_start.row][m_start.col]->Search(nullptr);
+
 	m_tiles[m_start.row][m_start.col]->SetAsStartTile();
 	m_tiles[m_end.row][m_end.col]->SetAsEndTile();
 }
 
+void Grid::Update()
+{
+	m_waitTime += QuickSDL::Timer::Instance()->DeltaTime();
 
+	if (m_waitTime > m_waitTimer && !m_pathFound)
+	{
+		m_waitTime = 0.0f;
+
+		std::vector<Tile*> openTiles;
+
+		for (unsigned int i = 0; i < m_tiles.size(); i++)
+		{
+			for (unsigned int j = 0; j < m_tiles[i].size(); j++)
+			{
+				if (m_tiles[i][j]->GetOpen())
+				{
+					openTiles.push_back(m_tiles[i][j]);
+				}
+			}
+		}
+
+
+		for (unsigned int i = 0; i < openTiles.size(); i++)
+		{
+			openTiles[i]->SearchNeighbours();
+		}
+
+		if (m_tiles[m_end.row][m_end.col]->GetOpen())
+		{
+			m_pathFound = true;
+
+			Tile* currentTile = m_tiles[m_end.row][m_end.col]->GetPathLink();
+			while (currentTile != m_tiles[m_start.row][m_start.col])
+			{
+				currentTile->SetAsPathTile();
+				currentTile = currentTile->GetPathLink();
+			}
+
+			m_tiles[m_start.row][m_start.col]->SetAsStartTile();
+			m_tiles[m_end.row][m_end.col]->SetAsEndTile();
+		}
+	}
+}
 
 void Grid::Render()
 {

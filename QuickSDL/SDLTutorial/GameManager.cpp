@@ -84,6 +84,8 @@ namespace QuickSDL {
 	void GameManager::Update() {
 
 		//GameEntity Updates should happen here
+
+		m_grid->Update();
 	}
 
 	void GameManager::LateUpdate() {

@@ -26,7 +26,9 @@ public:
 
 	~Grid();
 
-	void Render();
+	void Update() override;
+
+	void Render() override;
 
 private:
 
@@ -47,4 +49,9 @@ private:
 
 	std::vector<Tile*> m_open;
 	std::vector<Tile*> m_searched;
+
+	float const m_waitTimer = 0.1f;
+	float m_waitTime;
+
+	bool m_pathFound = false;
 };
