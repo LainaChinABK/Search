@@ -68,6 +68,13 @@ void Tile::VisitNeighbours()
 	{
 		if (m_neighbours[i] && !m_neighbours[i]->m_visited)
 		{
+			// update g(n) if necessary
+			int tempG = GetG() + 1;
+			if (tempG < m_neighbours[i]->GetG())
+			{
+				m_neighbours[i]->SetG(tempG);
+			}
+
 			m_neighbours[i]->Visit();
 			m_neighbours[i]->m_prevTile = this;
 		}

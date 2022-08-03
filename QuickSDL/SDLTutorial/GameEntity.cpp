@@ -20,6 +20,9 @@ namespace QuickSDL {
 		mActive = true;
 		mParent = NULL;
 		mScale = VEC2_ONE;
+		m_g = 0;
+		m_h = 0;
+		m_f = 0;
 	}
 
 	GameEntity::~GameEntity() {
@@ -153,5 +156,15 @@ namespace QuickSDL {
 	void GameEntity::Render() {
 
 
+	}
+
+	void GameEntity::SetG(int n) {
+		m_g = n;
+		UpdateF();
+	}
+
+	void GameEntity::SetH(int n) {
+		m_h = n;
+		UpdateF();
 	}
 }

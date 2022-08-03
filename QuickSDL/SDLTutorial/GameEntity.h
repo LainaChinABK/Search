@@ -45,6 +45,13 @@ namespace QuickSDL {
 		//----------------------------------------------------------------------------
 		GameEntity* mParent;
 
+
+		// A* variables and private function
+		int m_g;
+		int m_h;
+		int m_f;
+		void UpdateF() { m_f = m_g + m_h; }
+
 	public:
 		//----------------------------------------------------------------------------
 		//pos is the starting position of the new GameEntity                          
@@ -127,6 +134,14 @@ namespace QuickSDL {
 
 		virtual void Update();
 		virtual void Render();
+
+
+		// A* functions
+		void SetG(int n);
+		void SetH(int n);
+		int GetG() { return m_g; }
+		int GetH() { return m_h; }
+		int GetF() { return m_f; }
 	};
 }
 #endif

@@ -1,6 +1,7 @@
 #include "Grid.h"
 #include "Timer.h"
 #include <time.h>
+#include <math.h>
 
 Grid::Grid(unsigned int const& rows, unsigned int const& cols, unsigned int const& width, unsigned int const& height, unsigned int const& padding)
 	: m_rows(rows)
@@ -77,6 +78,10 @@ void Grid::GenerateTiles()
 		{
 			m_tiles[i][j]->SetNeighbours(i > 0 ? m_tiles[i - 1][j] : nullptr, i < m_rows - 1 ? m_tiles[i + 1][j] : nullptr
 				, j > 0 ? m_tiles[i][j - 1] : nullptr, j < m_cols - 1 ? m_tiles[i][j + 1] : nullptr);
+
+			// calculate heuristic using distance formula
+			int dist = (int) pow((pow((double) m_endPoint.row - i, 2) + pow((double) m_endPoint.col - j, 2)), .5);
+			m_tiles[i][j]->SetH(dist);
 		}
 	}
 
@@ -96,13 +101,27 @@ void Grid::Update()
 
 		if (!m_pathFound)
 		{
+			// iterate through grid and push open tiles to m_open
+			// this will initially only include the start tile
 			for (unsigned int i = 0; i < m_rows; i++)
 			{
 				for (unsigned int j = 0; j < m_cols; j++)
 				{
 					if (m_tiles[i][j]->GetOpen())
 					{
-						m_open.push_back(m_tiles[i][j]);
+						if (!m_open.size() || (m_open.back()->GetF() <= m_tiles[i][j]->GetF()))
+						{
+							m_open.push_back(m_tiles[i][j]);
+						}
+						// insert based on estimated cost (f = g + h) instead of always appending
+						for (int k = 0; k < m_open.size(); k++)
+						{
+							if (m_tiles[i][j]->GetF() < m_open[k]->GetF())
+							{
+								m_open.insert(m_open.begin() + k, m_tiles[i][j]);
+								break;
+							}
+						}
 					}
 				}
 			}
@@ -112,6 +131,7 @@ void Grid::Update()
 				m_open[i]->VisitNeighbours();
 			}
 
+			// check for endpoint
 			if (m_tiles[m_endPoint.row][m_endPoint.col]->GetOpen())
 			{
 				m_pathFound = true;
@@ -128,6 +148,7 @@ void Grid::Update()
 				m_tiles[m_endPoint.row][m_endPoint.col]->SetAsEndPoint();
 			}
 
+			// reset vector
 			m_open.clear();
 		}
 	}
